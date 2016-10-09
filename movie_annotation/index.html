@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<title>Classic Movie</title>
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+<h1 id="title">Classic Movie</h1>
+
+<video src="https://www.cs.tufts.edu/comp/20/classic.mp4" id="classic_video" controls></video>
+<div id="movie_quotes"></div>
+
+<script>
+	function modifyText() {
+		var text = document.getElementById("movie_quotes");
+		if (v.currentTime > 24 && v.currentTime < 30) {
+			text.innerHTML = "Igor: DR. FRANKENSTEIN?!?!?";
+		} else if (v.currentTime > 31 && v.currentTime < 34) {
+			text.innerHTML = "Dr. Frederick Frankenstein: Frokensteen.";			
+		} else if (v.currentTime > 34 && v.currentTime < 36) {
+			text.innerHTML = "Igor: You're putting me on.";
+		} 
+
+		else if (v.currentTime > 36 && v.currentTime < 39) {
+			text.innerHTML = "Dr. Frederick Frankenstein: No, it pronounced, 'Frokensteen'.";
+		} else if (v.currentTime > 39 && v.currentTime < 41) {
+			text.innerHTML = "Igor: Do you also say Froaderick?";
+		} else if (v.currentTime > 41 && v.currentTime < 44) {
+			text.innerHTML = "Dr. Frederick Frankenstein: No . . . 'Frederick.'";
+		} else if (v.currentTime > 44 && v.currentTime < 47) {
+			text.innerHTML = "Igor: Well, why isn't it 'Froaderick Frokensteen'?";
+		} else if (v.currentTime > 47 && v.currentTime < 50) {
+			text.innerHTML = "Dr. Frederick Frankenstein: It isn't, it's 'Frederick Frokensteen'";
+		} else if (v.currentTime > 50 && v.currentTime < 51) {
+			text.innerHTML = "Igor: I see.";
+		} else if (v.currentTime > 51 && v.currentTime < 53) {
+			text.innerHTML = "Dr. Frederick Frankenstein: You must be Igor. [He pronounces it ee-gor.]";
+		} else if (v.currentTime > 53 && v.currentTime < 57) {
+			text.innerHTML = "Igor: No, it's pronounced 'eye-gor.'";
+		} else if (v.currentTime > 57 && v.currentTime < 59) {
+			text.innerHTML = "Dr. Frederick Frankenstein: But they told me it was 'ee-gor'...";
+		} else if (v.currentTime > 59 && v.currentTime < 61) {
+			text.innerHTML = "Igor: Well, they were wrong then, weren't they?";
+		} else if (v.currentTime > 61 && v.currentTime < 64) {
+			text.innerHTML = "Dr. Frederick Frankenstein: Uh, you were sent here by Herr Falkstein, weren't you?";
+		} else if (v.currentTime > 64 && v.currentTime < 69) {
+			text.innerHTML = "Igor: Yes. My grandfather used to work for your grandfather.";
+		} else if (v.currentTime > 69 && v.currentTime < 72) {
+			text.innerHTML = "Dr. Frederick Frankenstein: How nice.";
+		} else if (v.currentTime > 72 && v.currentTime < 74) {
+			text.innerHTML = "Igor: Of course the rates have gone up.";
+		} else if (v.currentTime > 74 && v.currentTime < 89) {
+			text.innerHTML = "Dr. Frederick Frankenstein: Of course, of course, I'm sure we'll get along splendidly. Oh, I uh, you know I don't mean to embarrass you, but I'm rather a brilliant surgeon. Perhaps I can help you with that hump.";
+		} else if (v.currentTime > 89) {
+			text.innerHTML = "Igor: What hump?";
+		}
+		
+	}
+	
+	var v = document.getElementById("classic_video");
+	v.addEventListener("timeupdate", modifyText);
+
+	// Complete this section and create a CSS file named style.css
+</script>
+</body>
+</html>	
