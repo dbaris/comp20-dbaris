@@ -167,10 +167,12 @@ function loadMap () {
 
     var closestStation = getClosestStation();
 
-    var infowindow = new google.maps.InfoWindow({
+    var infowindow1 = new google.maps.InfoWindow({
    		content: "<h3> Closest station: " + closestStation[0] + 
    				 "</h3> <p>Only " + closestStation[1] + " miles away!</p>"
   	});
+
+  	var infowindow = new google.maps.InfoWindow();
 
     var stationCoordinates = [
     	new google.maps.LatLng(myLat, myLng),
@@ -188,7 +190,7 @@ function loadMap () {
     lineToStation.setMap(map);
 
     marker.addListener('click', function() {
-    	infowindow.open(map, marker);
+    	infowindow1.open(map, marker);
     });
 
     var stationTimes;
@@ -198,7 +200,7 @@ function loadMap () {
 
    	xhr.open("get", "https://rocky-taiga-26352.herokuapp.com/redline.json", true);
 	xhr.onreadystatechange = function() {
-   		/(xhr.responseText);	
+
    		if (xhr.readyState == 4 && xhr.status == 200) {
 				stationTimes = JSON.parse(xhr.responseText)["TripList"]["Trips"];
 				for (var i = 0; i < stationTimes.length; i++) {
@@ -208,7 +210,7 @@ function loadMap () {
 					}
 				}		
 		} else if (xhr.status != 200) {
-			window.alert("Error connecting to MBTA server! Refresh and try again.");
+			window.alert("Error connecting to MBTA server! Refresh.");
 		}
 
 		/* Add station markers */
@@ -216,6 +218,8 @@ function loadMap () {
 			var sortedTimes = stations[i]["times"].sort(function (a, b) {
 			  return a - b;
 			});
+
+			//console.log(sortedTimes);
 
 			stations[i]["marker"] = new google.maps.Marker({
 	          	position: {lat: stations[i]["loc"][0], lng: stations[i]["loc"][1]},
@@ -239,12 +243,12 @@ function loadMap () {
    	xhr.send();
 
 	drawRedLine(map);
-
 }
 
 function addToTimeList(stopName, time) {
 	for (var i = 0; i < stations.length; i++) {
 		if (stopName === stations[i]["name"]) {
+			//console.log(time);
 			stations[i]["times"][stations[i]["times"].length] = time;
 			break;
 		}
