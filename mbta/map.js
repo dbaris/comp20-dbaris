@@ -198,7 +198,7 @@ function loadMap () {
 
    	xhr.open("get", "https://rocky-taiga-26352.herokuapp.com/redline.json", true);
 	xhr.onreadystatechange = function() {
-   		// console.log(xhr.responseText);	
+   		/(xhr.responseText);	
    		if (xhr.readyState == 4 && xhr.status == 200) {
 				stationTimes = JSON.parse(xhr.responseText)["TripList"]["Trips"];
 				for (var i = 0; i < stationTimes.length; i++) {
@@ -213,11 +213,9 @@ function loadMap () {
 
 		/* Add station markers */
 		for (i = 0; i < stations.length; i++) {
-			//console.log(stations[i]["times"]);
 			var sortedTimes = stations[i]["times"].sort(function (a, b) {
 			  return a - b;
 			});
-			//console.log(sortedTimes);
 
 			stations[i]["marker"] = new google.maps.Marker({
 	          	position: {lat: stations[i]["loc"][0], lng: stations[i]["loc"][1]},
@@ -247,7 +245,6 @@ function loadMap () {
 function addToTimeList(stopName, time) {
 	for (var i = 0; i < stations.length; i++) {
 		if (stopName === stations[i]["name"]) {
-			// console.log(time);
 			stations[i]["times"][stations[i]["times"].length] = time;
 			break;
 		}
