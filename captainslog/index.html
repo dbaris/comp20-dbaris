@@ -7,7 +7,25 @@
 	<title>Captain's Log</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-	  // Your work will be done here...
+		$(document).ready(function() {
+			for (key in localStorage) {
+				$("#log").append("<p> " + key + " - " + localStorage[key] + "<p>");
+			}
+		});
+
+		$(document).keypress(function(e) {
+			if (e.which == 13) {
+				var timeStamp = new Date();
+				console.log(timeStamp);
+				localStorage.setItem(timeStamp, $('#msg').val())
+				/*console.log(localStorage);*/
+				$("#log").append("<p> " + timeStamp + " - " + $('#msg').val() + "<p>");
+			}
+			$("#msg").html('whaddup bish');
+		});
+
+		
+	  	
 	</script>
 </head>
 
