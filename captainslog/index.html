@@ -16,11 +16,9 @@
 		$(document).keypress(function(e) {
 			if (e.which == 13) {
 				var timeStamp = new Date();
-				console.log(timeStamp);
 				localStorage.setItem(timeStamp, $('#msg').val())
 				$("#log").prepend("<p> " + timeStamp + " - " + $('#msg').val() + "<p>");
 			}
-			$("#msg").html('whaddup bish');
 		});
 
 		
