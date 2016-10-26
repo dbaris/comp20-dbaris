@@ -9,7 +9,7 @@
 	<script>
 		$(document).ready(function() {
 			for (key in localStorage) {
-				$("#log").append("<p> " + key + " - " + localStorage[key] + "<p>");
+				$("#log").prepend("<p> " + key + " - " + localStorage[key] + "<p>");
 			}
 		});
 
@@ -18,8 +18,7 @@
 				var timeStamp = new Date();
 				console.log(timeStamp);
 				localStorage.setItem(timeStamp, $('#msg').val())
-				/*console.log(localStorage);*/
-				$("#log").append("<p> " + timeStamp + " - " + $('#msg').val() + "<p>");
+				$("#log").prepend("<p> " + timeStamp + " - " + $('#msg').val() + "<p>");
 			}
 			$("#msg").html('whaddup bish');
 		});
