@@ -198,8 +198,8 @@ function loadMap () {
     /* Get station data from API */
     var xhr = new XMLHttpRequest();
 
-   	xhr.open("get", "https://rocky-taiga-26352.herokuapp.com/redline.json", true);
-	xhr.onreadystatechange = function() {
+   	xhr.open("get", "https://salty-atoll-28386.herokuapp.com/redline.json", true);
+	  xhr.onreadystatechange = function() {
 
    		if (xhr.readyState == 4 && xhr.status == 200) {
 				stationTimes = JSON.parse(xhr.responseText)["TripList"]["Trips"];
