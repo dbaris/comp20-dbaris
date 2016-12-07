@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<head>
+	<title>Assignment 4: Security & Privacy</title>
+	<style>
+		img {
+			width: 80%;
+			padding: 1px;
+		}
+		h1 {
+			color: navy;
+		}
+		h3 {
+			color: navy;
+		}
+		.code {
+			background: #1e1949;
+			color: white;
+			padding: 1%;
+			margin: 0.5%;
+			width: 40%;	
+		}
+
+		.code_new {
+			color: #34ba25;
+		}
+
+	</style>
+</head>
+<body>
+
+<h1>Assignment 4: Security & Privacy of Assignment 3</h1>
+
+<h3>Introduction</h3>
+<!-- Provide a description of the product and what you were hired to do -->
+<p>This app, which can be accessed at <a href="https://polar-fjord-32284.herokuapp.com/">https://polar-fjord-32284.herokuapp.com/</a>, is a server connecting the resulting high scores from the game 2048 to a database. The app contains several routes, including one to display all high scores, one to allow data to be added to the database, and another to see scores specific to one user. This report contains a summary of the security issues present in the app.
+</p>
+
+<h3>Methodology</h3>
+<!-- Describe your methodology pen testing the application, including the tools that you used -->
+<p>
+Tools: curl
+</p>
+
+<h3>Abstract of Findings</h3>
+<!-- Provide an overview of all the security and privacy issues you identified. This section should be written for non-technical managers who do not have technical expertise and do not have time to read the entire document. Write this section using lay language. -->
+<p>
+</p>
+
+<h3>Issues Found</h3>
+<!--For each issue that you find, document:
+* Issue (e.g., database injection, really bad programming practice)
+* Location / page where issue was found
+* Severity of issue (e.g., low, medium , or high). Justify your answer.
+* Description of issue. How did you find it? A screenshot of problem is excellent.
+* Proof of vulnerability. Show pictures.
+* Resolution. Make recommendation(s) on how issue can be resolved. Show code if possible. -->
+
+<h4>Issue 1: Cross Site Scripting (XSS)</h4>
+<p>
+<ul>
+	<li>Page: /submit.json</li>
+	<li>Severity: High. ADD EXPLANATION</li>
+	<li>This issue was discovered by sending a curl post request to the server containing a script as the data content. Since the input is not currently being sanitized, hackers can submit code containing scripts, such as the 'Hacked by Deanna' alert. </li>
+	<img src="xss.jpeg" alt="command-line"/>
+	<li>Proof of Vulnerability:</li>
+	Upon opening the main app page at <a href="https://polar-fjord-32284.herokuapp.com/">https://polar-fjord-32284.herokuapp.com/</a>, this popup appears.
+	<img src="xss_hacked.jpeg" alt="hacked page"/>
+	<li>Resolution:</li>
+	This issue can be resolved by sanitizing user input before storing it. This is most relevant in the post request route. For example,
+
+	<div class="code">
+	<p>var u_name = request.body.username;</p>
+	<p>var score = parseInt(request.body.score);</p>
+	<p>var grid = request.body.grid;</p>
+	</div>
+	
+	should become
+
+	<div class="code">
+	<p>var u_name = request.body.username;</p>
+	<p>var score = parseInt(request.body.score);</p>
+	<p>var grid = request.body.grid;</p>
+
+	<div class="code_new">
+	<p>u_name = u_name.replace(/[^\w\s]/gi, '');</p>
+	<p>score = score.replace(/[^\w\s]/gi, '');</p>
+	<p>grid = grid.replace(/[^\w\s]/gi, '');</p>
+	</div>
+	</div>
+</ul>
+
+	<!-- NOTE: download tyler's code tomorrow + find spot for this line -->
+	<!-- var food = request.body.food;
+	food = food.replace(/[^\w\s]/gi, ''); -->
+</p>
+
+
+<h4>Issue 2: NoSQL Injection</h4>
+<p>
+<ul>
+	<li>Page: </li>
+	<li>Severity: </li>
+	<li>Description:</li>
+	<li>Proof of Vulnerability:</li>
+	<li>Resolution:</li>
+</ul>
+</p>
+
+<h4>Issue 3: </h4>
+<p>
+<ul>
+	<li>Page: </li>
+	<li>Severity: </li>
+	<li>Description:</li>
+	<li>Proof of Vulnerability:</li>
+	<li>Resolution:</li>
+</ul>
+	
+</p>
+
+<h3>Conclusion</h3>
+<!-- You can also list future considerations and recommendations with costs. -->
+<p>
+</p>
+
+</body>
+</html>
