@@ -2,125 +2,108 @@
 <head>
 	<title>Assignment 4: Security & Privacy</title>
 	<style>
-		img {
-			width: 80%;
-			padding: 1px;
-		}
-		h1 {
-			color: navy;
-		}
-		h3 {
-			color: navy;
-		}
-		.code {
-			background: #1e1949;
-			color: white;
-			padding: 1%;
-			margin: 0.5%;
-			width: 40%;	
+		body {
+			font-family: "Helvetica", Helvetica;
+			padding-left: 2%;
+			padding-right: 2%;
 		}
 
-		.code_new {
-			color: #34ba25;
+		img {
+			width: 80%;
+			padding: 1%;
+		}
+		h1 {
+			color: #7a0f18;
+		}
+		h2 {
+			color: #7a0f18;
+		}
+		
+		.images {
+			width: 50%;
 		}
 
 	</style>
 </head>
 <body>
 
-<h1>Assignment 4: Security & Privacy of Assignment 3</h1>
+<h1>Assignment 4: Security & Privacy</h1>
 
-<h3>Introduction</h3>
+<h2>Introduction</h2>
 <!-- Provide a description of the product and what you were hired to do -->
 <p>This app, which can be accessed at <a href="https://polar-fjord-32284.herokuapp.com/">https://polar-fjord-32284.herokuapp.com/</a>, is a server connecting the resulting high scores from the game 2048 to a database. The app contains several routes, including one to display all high scores, one to allow data to be added to the database, and another to see scores specific to one user. This report contains a summary of the security issues present in the app.
 </p>
 
-<h3>Methodology</h3>
-<!-- Describe your methodology pen testing the application, including the tools that you used -->
+<h2>Methodology</h2>
 <p>
-Tools: curl
+To test this application, I used curl to send post requests to the server and wrote a shell script to automate what would otherwise be a time intensive process. I spent some time experimenting with database injection (through curl and the browser URL), ultimately concluding that this is actually impossible given the code structure. I also used online resources to learn about the vulnerabilities in CORS and how they can be resolved.  
 </p>
 
-<h3>Abstract of Findings</h3>
-<!-- Provide an overview of all the security and privacy issues you identified. This section should be written for non-technical managers who do not have technical expertise and do not have time to read the entire document. Write this section using lay language. -->
+<h2>Abstract of Findings</h2>
 <p>
+There were several security flaws found in this application. The first is Cross Site Scripting (XSS), which occurs when the input supplied by users is not checked before it is used. This gives malicious users the ability to run almost any type of code, which can be used to create irritating popups or redirect the page. The next issue is the possibility of overflowing the server, due in part to its small size, but also due to a lack of authentication. Finally, there are security issues with the headers which allow anyone to access the data.
 </p>
 
-<h3>Issues Found</h3>
-<!--For each issue that you find, document:
-* Issue (e.g., database injection, really bad programming practice)
-* Location / page where issue was found
-* Severity of issue (e.g., low, medium , or high). Justify your answer.
-* Description of issue. How did you find it? A screenshot of problem is excellent.
-* Proof of vulnerability. Show pictures.
-* Resolution. Make recommendation(s) on how issue can be resolved. Show code if possible. -->
+<h2>Issues Found</h2>
 
-<h4>Issue 1: Cross Site Scripting (XSS)</h4>
+<h3>Issue 1: Cross Site Scripting (XSS)</h3>
 <p>
 <ul>
 	<li>Page: /submit.json</li>
-	<li>Severity: High. ADD EXPLANATION</li>
-	<li>This issue was discovered by sending a curl post request to the server containing a script as the data content. Since the input is not currently being sanitized, hackers can submit code containing scripts, such as the 'Hacked by Deanna' alert. </li>
-	<img src="xss.jpeg" alt="command-line"/>
-	<li>Proof of Vulnerability:</li>
-	Upon opening the main app page at <a href="https://polar-fjord-32284.herokuapp.com/">https://polar-fjord-32284.herokuapp.com/</a>, this popup appears.
+	<li>Severity: High. This vulnerability makes the page potentially unusable since it is subject to popups and page redirection.</li>
+	<li>Description: This issue was discovered by sending a curl post request to the server containing a script as the data content. Since the input is not currently being sanitized, hackers can submit input that contains scripts, such as the 'Hacked by Deanna' alert. </li>
+	<img src="xss.jpeg" alt="command line"/>
+	<li>Proof of Vulnerability: After the curl request was sent, opening the main app page at <a href="https://polar-fjord-32284.herokuapp.com/">https://polar-fjord-32284.herokuapp.com/</a>, shows this popup message: </li>
 	<img src="xss_hacked.jpeg" alt="hacked page"/>
-	<li>Resolution:</li>
-	This issue can be resolved by sanitizing user input before storing it. This is most relevant in the post request route. For example,
+	<li>Resolution: This issue can be resolved by sanitizing user input before storing it in the database. To do so in the post request route, call .replace on any data sent in as a parameter to remove potentially problematic characters. Eliminating characters needed to run scripts, such as '<', makes it impossible for these scripts to execute. For example, the code: </li>
 
-	<div class="code">
-	<p>var u_name = request.body.username;</p>
-	<p>var score = parseInt(request.body.score);</p>
-	<p>var grid = request.body.grid;</p>
+	<div class="images">
+	<img src="unsanitized.jpeg" alt="code snippet"/>
+	<p>should become:</p>
+	<img src="sanitizing.jpeg" alt="code snippet"/>
 	</div>
+
+</ul>
+</p>
+
+
+<h3>Issue 2: Limited Server Size</h3>
+<p>
+<ul>
+	<li>Page: / </li>
+	<li>Severity: Medium. For an app with little traffic, it's unlikely that the server will run out of space. However, it only takes one intentional user to send in massive amounts of data and cause the server to crash, rendering the page unusable. </li>
+	<li>Description: A free account on Heroku has a limited amount of space - 496 MB, to be exact. Unfortunately, while this option is budget friendly, it also means the server can be overflowed by trying to handle more than this amount of information. To test this, I wrote a shell script that would (hypothetically) run forever, adding an infinte amount of data. Eventually, the server would run out of room to handle the amount of information and crash. </li>
+
+	<p> Example shell script: </p>
 	
-	should become
+	<img src="infinite_loop_code.jpeg" alt="shell script"/>
+	
+	<li>Proof of Vulnerability: After running the above script for a few seconds, opening up the Game Center page revealed that multiple instances of the post request had been added. If left running indeterminately, the script would cause the server to exceed its limit.
+	</li>
 
-	<div class="code">
-	<p>var u_name = request.body.username;</p>
-	<p>var score = parseInt(request.body.score);</p>
-	<p>var grid = request.body.grid;</p>
+	<img src="infinite_loop.png" alt="game center"/>
 
-	<div class="code_new">
-	<p>u_name = u_name.replace(/[^\w\s]/gi, '');</p>
-	<p>score = score.replace(/[^\w\s]/gi, '');</p>
-	<p>grid = grid.replace(/[^\w\s]/gi, '');</p>
-	</div>
-	</div>
-</ul>
-
-	<!-- NOTE: download tyler's code tomorrow + find spot for this line -->
-	<!-- var food = request.body.food;
-	food = food.replace(/[^\w\s]/gi, ''); -->
-</p>
-
-
-<h4>Issue 2: NoSQL Injection</h4>
-<p>
-<ul>
-	<li>Page: </li>
-	<li>Severity: </li>
-	<li>Description:</li>
-	<li>Proof of Vulnerability:</li>
-	<li>Resolution:</li>
+	<li>Resolution: One solution to this issue is to expand the server size by purchasing a plan from Heroku with more space. While this doesn't solve the issue of someone maliciously sending infinite post requests, it would allow the app to support more users if it is planning to host a greater amount of traffic. Another solution is to require authentication in order to make requests (see below). This would prevent random people from having access to the server and hopefully prevent intentional overflowing. </li>
 </ul>
 </p>
 
-<h4>Issue 3: </h4>
+<h3>Issue 3: Cross Origin Resource Sharing (CORS) </h3>
 <p>
 <ul>
-	<li>Page: </li>
-	<li>Severity: </li>
-	<li>Description:</li>
-	<li>Proof of Vulnerability:</li>
-	<li>Resolution:</li>
+	<li>Page: /submit.json </li>
+	<li>Severity: Medium. This page should really only be accessible from inside the game, not for anyone who happens to have access to the URL.</li>
+	<li>Description: The /submit.json page returns an "Access-Control-Allow-Origin" header that allows anyone to submit data to the server, and therefore the MongoDB database. If the data on the page needs to remain secure, this becomes dangerous. </li>
+	<li>Proof of Vulnerability: This issue can be seen inside the code for the post request: </li>
+	<img src="cors.jpeg" alt="CORS code"/>
+
+	<li>Resolution: This issue can be resolved in two ways: 1) Using a CORS authenticated request, or 2) checking the origin header value on the server side. The first option would require adding users (and passwords) to the application, but both would be successful in limiting access and increasing the overall security of the app.</li>
 </ul>
 	
 </p>
 
-<h3>Conclusion</h3>
-<!-- You can also list future considerations and recommendations with costs. -->
+<h2>Conclusion</h2>
 <p>
+While this app currently has several security issues, they can all be resolved with the suggestions presented here. It's also worth noting that the app is safe against database injection, which was also tested for this report. The most pressing problem is the Cross Site Scripting issue, which can be solved with a quick, easy fix that will prevent major security violations. Implementing authentication has more tradeoffs. It may take some time and add a layer of complexity to the code, but it would also make the app significantly more secure. Finally, increasing the server size may be worthwhile if the app is expecting more traffic, but I think setting up authentication is a more sustainable solution to the issue of overloading the server. Best of luck securing your app!
 </p>
 
 </body>
